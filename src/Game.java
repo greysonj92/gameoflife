@@ -1,16 +1,15 @@
-//TODO toroidal array works, checkBoard now counts up all neighbors and returns it as an array.
-//TODO next task is implementing the logic of the game
+//TODO add gui and clean up
 
 
-
+import java.util.Arrays;
 
 public class Game {
 
     public static void main(String[] args){
 
         int rows, columns;
-        rows = 50;
-        columns = 50;
+        rows = 5;
+        columns = 5;
 
         //set up board with all spaces, x will denote a living square
         char game[][] = new char[rows][columns];
@@ -20,10 +19,52 @@ public class Game {
             }
         }
 
+        game[2][0] = 'x';
+        game[3][1] = 'x';
+        game[3][2] = 'x';
+        game[2][2] = 'x';
+        game[1][2] = 'x';
+
+        printBoard(game);
+
+        int neighbors[][] = new int[rows][columns];
+
+        while(true){
+           neighbors = checkBoard(game);
+           game = updateBoard(game, neighbors);
+           printBoard(game);
+
+        }
 
 
 
 
+
+    }
+    //updates the game board to current iteration, killing and giving birth to cells
+    public static char[][] updateBoard(char game[][], int[][] neighbors){
+
+        for( int i = 0; i < game.length -1; i++){
+            for( int j = 0; j < game[0].length -1; j++){
+                //rule 1, Any live cell with fewer than two live neighbours dies, as if by underpopulation.
+                if(game[i][j] == 'x' && neighbors[i][j] < 2){
+                    game[i][j] = ' ';
+                }
+                //rule 2, ny live cell with two or three live neighbours lives on to the next generation.
+                else if(game[i][j] == 'x' && (neighbors[i][j] == 2 || neighbors[i][j] == 3) ){
+                    //do nothing
+                }
+                //rule 3, Any live cell with more than three live neighbours dies, as if by overpopulation.
+                else if(game[i][j] == 'x' && neighbors[i][j] > 3){
+                    game[i][j] = ' ';
+                }
+                //rule 4, Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
+                else if(game[i][j] == ' ' && neighbors[i][j] == 3){
+                    game[i][j] = 'x';
+                }
+            }
+        }
+        return game;
     }
 
     //checks each cell of the board and determines if it lives or dies in the next round
@@ -208,6 +249,21 @@ public class Game {
             NWNeighbor = checkWNeighbor(game, NWNeighbor[0], NWNeighbor[1]);
             return NWNeighbor;
         }
+    }
+
+    //prints the game board to the console
+    public static void printBoard(char game[][]){
+// didn't accurately print board
+//        for(int i = 0; i < game.length -1; i++){
+//            for( int j = 0; j < game[0].length -1; j++){
+//                System.out.print(game[i][j]);
+//            }
+//            System.out.print('\n');
+//        }
+        //https://stackoverflow.com/questions/19648240/java-best-way-to-print-2d-array
+        System.out.println(Arrays.deepToString(game)
+                .replace("],","\n").replace(",","\t| ")
+                .replaceAll("[\\[\\]]", " "));
     }
 
 }
