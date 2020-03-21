@@ -1,37 +1,75 @@
-//TODO test all the neighbor checking functions, they should all work
-//TODO implement the checkBoard function, it should use the neighbor checking functions to determine all of a cell's neighbors,
-//TODO then check if the neighbor cells are empty or not, and total them up
+//TODO toroidal array works, checkBoard now counts up all neighbors and returns it as an array.
+//TODO next task is implementing the logic of the game
+
+
 
 
 public class Game {
 
     public static void main(String[] args){
 
-        //set up 3x3 board with all spaces, x will denote a living square
-        char game[][] = new char[3][3];
-        for(int i = 0; i < 3; i++){
-            for(int j = 0; j < 3; j++){
+        int rows, columns;
+        rows = 50;
+        columns = 50;
+
+        //set up board with all spaces, x will denote a living square
+        char game[][] = new char[rows][columns];
+        for(int i = 0; i < rows; i++){
+            for(int j = 0; j < columns; j++){
                 game[i][j] = ' ';
             }
         }
 
 
+
+
+
     }
 
     //checks each cell of the board and determines if it lives or dies in the next round
-    public void checkBoard(char game[][]){
+    public static int[][] checkBoard(char game[][]){
 
-        //new array to hold each cell's number of neighbors
-        int neighbors[][] = new int[3][3];
-        for(int i = 0; i < 3; i++){
-            for(int j = 0; j < 3; j++){
-                neighbors[i][j] = 0;
+        //new array to hold each cell's number of neighbors, set them initially to zero
+        int neighbors[][] = new int[game.length][game[0].length];
+        for(int i = 0; i < game.length; i++){
+            for(int j = 0; j < game[0].length; j++){
+                //checks if neighbors are alive, then increments the neighbor count if it is
+                int temp[] = new int[2];
+                temp = checkNNeighbor(game, i, j);
+                if(game[temp[0]][temp[1]] == 'x'){
+                    neighbors[i][j] += 1;
+                }
+                temp = checkNENeighbor(game, i, j);
+                if(game[temp[0]][temp[1]] == 'x'){
+                    neighbors[i][j] += 1;
+                }
+                temp = checkENeighbor(game, i, j);
+                if(game[temp[0]][temp[1]] == 'x'){
+                    neighbors[i][j] += 1;
+                }
+                temp = checkSENeighbor(game, i, j);
+                if(game[temp[0]][temp[1]] == 'x'){
+                    neighbors[i][j] += 1;
+                }
+                temp = checkSNeighbor(game, i, j);
+                if(game[temp[0]][temp[1]] == 'x'){
+                    neighbors[i][j] += 1;
+                }
+                temp = checkSWNeighbor(game, i, j);
+                if(game[temp[0]][temp[1]] == 'x'){
+                    neighbors[i][j] += 1;
+                }
+                temp = checkWNeighbor(game, i, j);
+                if(game[temp[0]][temp[1]] == 'x'){
+                    neighbors[i][j] += 1;
+                }
+                temp = checkNWNeighbor(game, i, j);
+                if(game[temp[0]][temp[1]] == 'x'){
+                    neighbors[i][j] += 1;
+                }
             }
         }
-
-
-
-
+        return neighbors;
     }
     //determines the north neighbor, if normal neighbor is out of bounds, returns the toroidal neighbor
     public static int[] checkNNeighbor(char game[][], int i, int j){
@@ -121,7 +159,7 @@ public class Game {
     public static int[] checkSENeighbor(char game[][], int i, int j){
         int neighborIndex[] = new int[2];
         //check if normal neighbor exists
-        if(i + 1 <= game.length -1 && j + 1 <= game[0].length){
+        if(i + 1 <= game.length -1 && j + 1 <= game[0].length -1){
             neighborIndex[0] = i +1;
             neighborIndex[1] = j + 1;
             return neighborIndex;
@@ -139,7 +177,7 @@ public class Game {
     public static int[] checkSWNeighbor(char game[][], int i, int j){
         int neighborIndex[] = new int[2];
         //check if normal neighbor exists
-        if(i + 1 <= game.length && j - 1 >= 0){
+        if(i + 1 <= game.length -1 && j - 1 >= 0){
             neighborIndex[0] = i + 1;
             neighborIndex[1] = j - 1;
             return neighborIndex;
